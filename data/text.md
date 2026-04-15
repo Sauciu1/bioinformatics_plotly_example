@@ -4,10 +4,11 @@ The tool displays interactive graphs used throughout the tasks. The data, conten
 
 
 ### Plot axes:
-- left-click and drag
-- right-click and drag
-- mouse middle button and drag
-- mouse scroll wheel 
+- Left-click and drag
+- Right-click and drag
+- Mouse middle button and drag
+- Mouse scroll wheel 
+- Mouse hover information might be available for some plots.
 
 
 ### Toolbar:

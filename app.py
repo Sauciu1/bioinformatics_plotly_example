@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import re
 import base64
 import mimetypes
@@ -92,16 +93,26 @@ class App:
                 return
 
             filtered_iris_df = self.iris_df[self.iris_df["species"].isin(selected_species)].copy()
-            fig = px.density_contour(
-                filtered_iris_df,
-                x="sepal_length",
-                y="sepal_width",
-                color="species",
-                color_discrete_sequence=HUE_PALETTE,
-                title="Iris Sepal Contour by Species",
-            )
-            fig.update_traces(contours_coloring="none", line_width=3)
+            fig = go.Figure()
+            for idx, species in enumerate(selected_species):
+                species_df = filtered_iris_df[filtered_iris_df["species"] == species]
+                fig.add_trace(
+                    go.Histogram2dContour(
+                        x=species_df["sepal_length"],
+                        y=species_df["sepal_width"],
+                        name=species,
+                        line=dict(
+                            color=HUE_PALETTE[idx % len(HUE_PALETTE)],
+                            width=3,
+                        ),
+                        contours=dict(coloring="none"),
+                        showscale=False,
+                        hoverinfo="skip",
+                    )
+                )
+
             fig.update_layout(
+                title="Iris Sepal Contour by Species",
                 xaxis_title="Sepal length (cm)",
                 yaxis_title="Sepal width (cm)",
                 xaxis=dict(
@@ -109,6 +120,7 @@ class App:
                     linewidth=2,
                     linecolor="black",
                     mirror=True,
+                    showgrid=True,
                 ),
                 yaxis=dict(
                     showline=True,
