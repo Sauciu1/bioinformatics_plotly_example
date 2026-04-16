@@ -207,7 +207,7 @@ class App:
             style_utils.question("0.0", "This is an example question.", self.add_species_kde_tab)
 
         with tab_3d:
-            style_utils.question("0.1", "This is an another example question.", self.add_species_3d_scatter_tab)
+            style_utils.question("0.1", "This is another example question.", self.add_species_3d_scatter_tab)
 
    
         self.render_markdown_with_local_images(self.text_content)

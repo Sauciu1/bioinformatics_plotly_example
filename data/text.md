@@ -5,7 +5,7 @@ The tool displays interactive graphs used throughout the tasks. The data, conten
 For display purposes, the example includes extended English text. Such text will not be present in final tasks. 
 
 ### Tabs
-- Questions will be split be split between tabs based on context. 
+- Questions will be split between tabs based on context. 
 
 ### Mouse controls:
 - Left-click and drag
