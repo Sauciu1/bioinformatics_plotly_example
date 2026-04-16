@@ -201,7 +201,7 @@ class App:
 
     def run(self):
 
-        tab_2d, tab_3d = st.tabs(["2D tab", "3D tab"])
+        tab_2d, tab_3d = st.tabs(["Question 0.0", "Question 0.1"])
 
         with tab_2d:
             style_utils.question("0.0", "This is an example question.", self.add_species_kde_tab)
@@ -209,7 +209,7 @@ class App:
         with tab_3d:
             style_utils.question("0.1", "This is an another example question.", self.add_species_3d_scatter_tab)
 
-        st.header("Instructions and notes")
+   
         self.render_markdown_with_local_images(self.text_content)
 
 if __name__ == "__main__":

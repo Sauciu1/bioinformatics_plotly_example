@@ -35,6 +35,21 @@ def setup_ui(page_title: str = "Example of interactive plots for bioinformatics 
             transform-origin: top right;
         }
 
+        /* Increase Streamlit tabs size: larger font, padding and minimum dimensions. */
+        div[role="tablist"] > button[role="tab"] {
+            font-size: 22px !important;
+            padding: 10px 18px !important;
+            min-height: 48px !important;
+            min-width: 140px !important;
+            border-radius: 8px !important;
+        }
+
+        /* Make the selected tab slightly more prominent. */
+        div[role="tablist"] > button[role="tab"][aria-selected="true"] {
+            font-weight: 700 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
+        }
+
         /* Keep checkboxes vertically aligned with their labels. */
         div[data-testid="stCheckbox"] label {
             align-items: center;
