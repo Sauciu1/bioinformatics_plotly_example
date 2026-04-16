@@ -22,7 +22,7 @@ HUE_PALETTE =["#56B4E9",  # sky blue
 
 class App:
     def __init__(self):
-        style_utils.setup_ui("Example user interface for bioinformatics task")
+        style_utils.setup_ui("Example user interface for Plant computational biology task")
         self.iris_df = pd.read_csv("data/Iris.csv").rename(
             columns={
                 "SepalLengthCm": "sepal_length",
