@@ -37,6 +37,24 @@ class App:
         with self.text_path.open("r", encoding="utf-8") as f:
             self.text_content = f.read()
 
+        st.markdown('<style>' + open('.streamlit/styles.css').read() + '</style>', unsafe_allow_html=True)
+
+        self.precompute_axis_ranges_and_centers()
+
+
+
+    def precompute_axis_ranges_and_centers(self):
+        pad_frac = 0.15
+        self.axis_ranges: dict[str, list[float]] = {}
+        self.axis_centers: dict[str, float] = {}
+        for col in ("sepal_length", "sepal_width", "petal_length"):
+            vmin = float(self.iris_df[col].min())
+            vmax = float(self.iris_df[col].max())
+            span = vmax - vmin
+            pad = span * pad_frac if span > 0 else 0.1
+            self.axis_ranges[col] = [vmin - pad, vmax + pad]
+            self.axis_centers[col] = (vmin + vmax) / 2.0
+
     def render_markdown_with_local_images(self, markdown_text: str):
         """Render markdown and resolve local image links relative to the markdown file."""
         image_pattern = re.compile(r"!\[(.*?)\]\((.*?)\)")
@@ -83,7 +101,6 @@ class App:
                 "Select species to include in the plot.",
                 "species_feature_checkbox",
             )
-
         with plot_col:
             if not style_utils.validate_feature_selection(
                 selected_species,
@@ -110,6 +127,23 @@ class App:
                         hoverinfo="skip",
                     )
                 )
+            # Ensure a legend area remains visible even when no species are selected.
+            # Add a single invisible trace positioned at the dataset center so
+            # Plotly will render the legend box without introducing layout None
+            # values. Use precomputed centers.
+            if not selected_species:
+                x_center = self.axis_centers["sepal_length"]
+                y_center = self.axis_centers["sepal_width"]
+                fig.add_trace(
+                    go.Scatter(
+                        x=[x_center],
+                        y=[y_center],
+                        mode="markers",
+                        marker=dict(opacity=0),
+                        showlegend=True,
+                        name="",
+                    )
+                )
 
             fig.update_layout(
                 title="Iris Sepal Contour by Species",
@@ -121,6 +155,7 @@ class App:
                     linecolor="black",
                     mirror=True,
                     showgrid=True,
+                    range=self.axis_ranges["sepal_length"],
                 ),
                 yaxis=dict(
                     showline=True,
@@ -128,9 +163,12 @@ class App:
                     linecolor="black",
                     mirror=True,
                     showgrid=True,
+                    range=self.axis_ranges["sepal_width"],
                 ),
             )
             fig = style_utils.style_plot_text(fig)
+            # Force legend title text and ensure legend is shown to avoid layout shift.
+            fig.update_layout(legend_title_text="Legend", showlegend=True)
             st.plotly_chart(
                 fig,
                 use_container_width=True,
@@ -169,16 +207,24 @@ class App:
                 color_discrete_sequence=HUE_PALETTE,
                 title="Iris Sepal and Petal Dimensions",
             )
-            fig.update_layout(
-                scene=dict(
-                    xaxis_title="Sepal length (cm)",
-                    yaxis_title="Sepal width (cm)",
-                    zaxis_title="Petal length (cm)",
-                    aspectmode="cube",
-                )
-                ,
-                margin=dict(l=0, r=0, t=60, b=0),
+            # Use precomputed axis ranges so the 3D plot does not shift when
+            # selections change.
+            x_col = "petal_length"
+            y_col = "sepal_width"
+            z_col = "sepal_length"
+
+            x_range = self.axis_ranges[x_col]
+            y_range = self.axis_ranges[y_col]
+            z_range = self.axis_ranges[z_col]
+
+            scene = dict(
+                xaxis=dict(title="Petal length (cm)", range=x_range, showgrid=True, showline=True),
+                yaxis=dict(title="Sepal width (cm)", range=y_range, showgrid=True, showline=True),
+                zaxis=dict(title="Sepal length (cm)", range=z_range, showgrid=True, showline=True),
+                aspectmode="cube",
             )
+
+            fig.update_layout(scene=scene, margin=dict(l=0, r=0, t=60, b=0))
             fig.add_shape(
                 type="rect",
                 xref="paper",
@@ -193,11 +239,31 @@ class App:
                 ),
             )
             fig = style_utils.style_plot_text(fig)
+            # Ensure legend remains visible even when no species are selected.
+            if not selected_species:
+                x_center3d = self.axis_centers["petal_length"]
+                y_center3d = self.axis_centers["sepal_width"]
+                z_center3d = self.axis_centers["sepal_length"]
+                fig.add_trace(
+                    go.Scatter3d(
+                        x=[x_center3d],
+                        y=[y_center3d],
+                        z=[z_center3d],
+                        mode="markers",
+                        marker=dict(opacity=0),
+                        showlegend=True,
+                        name="",
+                    )
+                )
+            fig.update_layout(legend_title_text="Legend", showlegend=True)
+            fig.update_traces(showlegend=True)
+            fig.update_scenes(dragmode="turntable")
             st.plotly_chart(
                 fig,
                 use_container_width=True,
                 config=style_utils.get_plotly_config(),
             )
+            
 
     def run(self):
 

@@ -1,6 +1,6 @@
 ## Instructions and notes
 
-The tool displays interactive graphs used throughout the tasks. The data, content, and plot formats shown here are illustrative only and do not reflect the final tasks. The examples use the widely known machine learning dataset [Iris Species](https://www.kaggle.com/datasets/uciml/iris).
+The tool displays interactive graphs used throughout the tasks. The data, content, and plot formats shown here are illustrative only and do not reflect the final tasks. The examples use the widely known machine learning dataset Iris Species.
 
 For display purposes, the example includes extended English text. Such text will not be present in final tasks. 
 

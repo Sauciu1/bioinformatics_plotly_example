@@ -29,6 +29,9 @@ def setup_ui(page_title: str = "Example of interactive plots for bioinformatics 
     st.markdown(
         """
         <style>
+        /* Reduce the top padding of the main app container to remove empty whitespace */
+        .block-container { padding-top: 0rem !important; }
+
         /* Keep modebar icons visible and 2x larger for Streamlit Plotly charts. */
         .stPlotlyChart .modebar {
             transform: scale(2);
@@ -64,6 +67,7 @@ def setup_ui(page_title: str = "Example of interactive plots for bioinformatics 
         """,
         unsafe_allow_html=True,
     )
+
     st.title(page_title)
 
 
@@ -176,11 +180,17 @@ def validate_feature_selection(
     min_features: int,
     plot_name: str,
 ) -> bool:
-    """Validate selected feature count and show a generic warning when insufficient."""
+    """Validate selected feature count and show a warning when insufficient.
+
+    The function will show a warning if the selected feature count is below
+    `min_features`, but it will allow rendering to continue. This makes plots
+    render even when fewer features are selected while still notifying the user.
+    """
     if len(selected_features) < min_features:
         feature_word = "feature" if min_features == 1 else "features"
         st.warning(
             f"Please select at least {min_features} {feature_word} to display the {plot_name}."
         )
-        return False
+        # Allow plotting to continue even when selection is below the minimum.
+        return True
     return True
